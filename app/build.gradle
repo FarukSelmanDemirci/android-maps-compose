@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -38,6 +39,7 @@ android {
 }
 
 dependencies {
+    implementation 'com.google.code.gson:gson:2.10.1'
     implementation platform(libs.androidx.compose.bom)
     implementation libs.androidx.compose.activity
     implementation libs.androidx.compose.foundation
@@ -68,6 +70,17 @@ dependencies {
     //implementation  "com.google.maps.android:maps-compose-utils:1.0.0"
     implementation project(':maps-compose-utils')
     implementation libs.maps.playservice
+    //ROOM
+    def room_version ="2.4.1"
+    //noinspection GradleDependency
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4" // replace with the latest version
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4" // replace with the latest version
+    implementation "androidx.room:room-runtime:2.5.1" // replace with the latest version
+    kapt "androidx.room:room-compiler:2.5.1" // replace with the latest version
+    implementation "androidx.room:room-ktx:2.5.1" // replace with the latest version
+
 }
 
 secrets {

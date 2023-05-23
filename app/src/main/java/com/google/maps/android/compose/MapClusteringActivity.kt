@@ -2,6 +2,8 @@ package com.google.maps.android.compose
 
 import android.os.Bundle
 import android.util.Log
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
@@ -18,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -27,8 +30,23 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterItem
 import com.google.maps.android.compose.clustering.Clustering
 import kotlin.random.Random
+import android.content.Context
+import java.io.IOException
 
 private val TAG = MapClusteringActivity::class.simpleName
+
+fun getJsonDataFromAsset(context: Context, fileName: String): String? {
+    val jsonString: String
+    try {
+        jsonString = context.assets.open(fileName).bufferedReader().use { it.readText() }
+    } catch (ioException: IOException) {
+        ioException.printStackTrace()
+        return null
+    }
+    return jsonString
+}
+
+data class locasyon(val Lokasyon: String)
 
 class MapClusteringActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,26 +59,45 @@ class MapClusteringActivity : ComponentActivity() {
 
 @Composable
 fun GoogleMapClustering() {
+
+    val context= LocalContext.current
+    val jsonFileString = getJsonDataFromAsset(context, "list.json")
+    Log.i("data", jsonFileString!!)
+    val gson = Gson()
+    val listlocasyonType = object : TypeToken<List<locasyon>>() {}.type
+
+    var lokasyon: List<locasyon> = gson.fromJson(jsonFileString, listlocasyonType)
     val items = remember { mutableStateListOf<MyItem>() }
-    LaunchedEffect(Unit) {
-        for (i in 1..10) {
-            val position = LatLng(
-                singapore2.latitude + Random.nextFloat(),
-                singapore2.longitude + Random.nextFloat(),
-            )
-            items.add(MyItem(position, "Marker", "Snippet"))
+    lokasyon.forEachIndexed {
+            idx, lokasyon -> Log.i("data", "> Item $idx:\n$lokasyon")
+        LaunchedEffect(Unit) {
+            val lat =   lokasyon.Lokasyon?.split(",")?.first()?.toDouble()
+            val log =  lokasyon.Lokasyon?.split(",")?.last()?.toDouble()
+            val position = lat?.let {
+                log?.let { it1 ->
+                    LatLng(
+                        it, it1
+
+                    )
+                }
+            }
+            position?.let { MyItem(it, "Marker", "Snippet") }?.let { items.add(it) }
+
         }
     }
+
     GoogleMapClustering(items = items)
 }
 
 @OptIn(MapsComposeExperimentalApi::class)
 @Composable
 fun GoogleMapClustering(items: List<MyItem>) {
+    val lokasyon = LatLng (38.66208, 39.23248)
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
         cameraPositionState = rememberCameraPositionState {
-            position = CameraPosition.fromLatLngZoom(singapore, 10f)
+
+            position = CameraPosition.fromLatLngZoom(lokasyon, 10f)
         }
     ) {
         Clustering(
@@ -100,7 +137,7 @@ fun GoogleMapClustering(items: List<MyItem>) {
             clusterItemContent = null
         )
         MarkerInfoWindow(
-            state = rememberMarkerState(position = singapore),
+            state = rememberMarkerState(position = lokasyon),
             onClick = {
                 Log.d(TAG, "Non-cluster marker clicked! $it")
                 true
