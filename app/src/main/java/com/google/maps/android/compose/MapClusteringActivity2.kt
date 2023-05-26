@@ -1,5 +1,7 @@
 package com.google.maps.android.compose
 
+
+import com.google.maps.android.compose.*
 import android.os.Bundle
 import android.util.Log
 import com.google.gson.Gson
@@ -33,9 +35,11 @@ import kotlin.random.Random
 import android.content.Context
 import java.io.IOException
 
-private val TAG = MapClusteringActivity::class.simpleName
+private val TAG = MapClusteringActivity2::class.simpleName
 
-fun getJsonDataFromAsset(context: Context, fileName: String): String? {
+
+
+fun getJsonDataFromAsset1(context: Context, fileName: String): String? {
     val jsonString: String
     try {
         jsonString = context.assets.open(fileName).bufferedReader().use { it.readText() }
@@ -46,27 +50,27 @@ fun getJsonDataFromAsset(context: Context, fileName: String): String? {
     return jsonString
 }
 
-data class locasyon(val Lokasyon: String)
+data class locasyon1(val Lokasyon: String)
 
-class MapClusteringActivity : ComponentActivity() {
+class MapClusteringActivity2 : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            GoogleMapClustering()
+            GoogleMapClustering1()
         }
     }
 }
 
 @Composable
-fun GoogleMapClustering() {
+fun GoogleMapClustering1() {
 
     val context= LocalContext.current
-    val jsonFileString = getJsonDataFromAsset(context, "list.json")
+    val jsonFileString = getJsonDataFromAsset(context, "list2.json")
     Log.i("data", jsonFileString!!)
-    val gson = Gson()
+    val gson1 = Gson()
     val listlocasyonType = object : TypeToken<List<locasyon>>() {}.type
 
-    var lokasyon: List<locasyon> = gson.fromJson(jsonFileString, listlocasyonType)
+    var lokasyon: List<locasyon> = gson1.fromJson(jsonFileString, listlocasyonType)
     val items = remember { mutableStateListOf<MyItem>() }
     lokasyon.forEachIndexed {
             idx, lokasyon -> Log.i("data", "> Item $idx:\n$lokasyon")
@@ -86,12 +90,12 @@ fun GoogleMapClustering() {
         }
     }
 
-    GoogleMapClustering(items = items)
+    GoogleMapClustering1(items = items)
 }
 
 @OptIn(MapsComposeExperimentalApi::class)
 @Composable
-fun GoogleMapClustering(items: List<MyItem>) {
+fun GoogleMapClustering1(items: List<MyItem>) {
     val lokasyon = LatLng (38.66208, 39.23248)
     GoogleMap(
         modifier = Modifier.fillMaxSize(),
@@ -146,7 +150,7 @@ fun GoogleMapClustering(items: List<MyItem>) {
     }
 }
 
-data class MyItem(
+data class MyItem1(
     val itemPosition: LatLng,
     val itemTitle: String,
     val itemSnippet: String,

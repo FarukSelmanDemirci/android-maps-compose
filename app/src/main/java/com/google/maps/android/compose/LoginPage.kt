@@ -25,6 +25,9 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.startActivity
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.maps.android.compose.theme.UserDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -64,7 +67,7 @@ fun Login(
                 if (user != null) {
                     withContext(Dispatchers.Main) {
                         Toast.makeText(context, "Login successful!", Toast.LENGTH_SHORT).show()
-                        val intent = Intent(context, MapClusteringActivity::class.java)
+                        val intent = Intent(context, ChooseMapActivity::class.java) // Changed here
                         context.startActivity(intent)
                     }
                 } else {
@@ -81,4 +84,7 @@ fun Login(
             Text("Don't have an account? Sign up")
         }
     }
+
 }
+
+

@@ -60,7 +60,6 @@ dependencies {
     androidTestImplementation libs.test.junit
     androidTestImplementation libs.androidx.test.compose.ui
     androidTestImplementation libs.coroutines
-
     // Uncomment the implementation 'com.google...` declaration and comment out the project
     // declaration if you want to test the sample app with a Maven Central release of the library.
     //implementation  "com.google.maps.android:maps-compose:2.2.1"
@@ -80,7 +79,6 @@ dependencies {
     implementation "androidx.room:room-runtime:2.5.1" // replace with the latest version
     kapt "androidx.room:room-compiler:2.5.1" // replace with the latest version
     implementation "androidx.room:room-ktx:2.5.1" // replace with the latest version
-
 }
 
 secrets {
