@@ -13,7 +13,7 @@
 
     <meta-data
         android:name="com.google.android.geo.API_KEY"
-        android:value="${MAPS_API_KEY}" />
+        android:value="AIzaSyBxbrNgeHIdN-buxsRDVYR0OY85vuMvzUg" />
 
     <activity
         android:name=".MainActivity"
@@ -28,6 +28,12 @@
         android:name=".MapClusteringActivity"
         android:exported="false"/>
 
+    <activity
+        android:name=".MapClusteringActivity2"
+        android:exported="false"/>
+    <activity
+        android:name=".ChooseMapActivity"
+        android:exported="false"/>
 
     <!-- Used by createComponentActivity() for unit testing -->
     <activity android:name="androidx.activity.ComponentActivity" />
