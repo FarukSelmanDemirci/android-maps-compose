@@ -27,6 +27,22 @@ class AdminActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             Scaffold {
+                var dialogMessage by remember { mutableStateOf<String?>(null) }
+                var showDialog by remember { mutableStateOf(false) }
+
+                if(showDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showDialog = false },
+                        title = { Text("Bilgilendirme") },
+                        text = { dialogMessage?.let { Text(it) } },
+                        confirmButton = {
+                            Button(onClick = { showDialog = false }) {
+                                Text("Tamam")
+                            }
+                        }
+                    )
+                }
+
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -45,13 +61,15 @@ class AdminActivity : ComponentActivity() {
                     OutlinedTextField(
                         value = lat,
                         onValueChange = { lat = it },
-                        label = { Text("Enlem") }
+                        label = { Text("Enlem") },
+                        modifier = Modifier.padding(bottom = 8.dp)
                     )
 
                     OutlinedTextField(
                         value = lon,
                         onValueChange = { lon = it },
-                        label = { Text("Boylam") }
+                        label = { Text("Boylam") },
+                        modifier = Modifier.padding(bottom = 8.dp)
                     )
 
                     Column {
@@ -65,7 +83,9 @@ class AdminActivity : ComponentActivity() {
                                 }
                             },
                             readOnly = true,
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 8.dp)
                         )
 
                         DropdownMenu(
@@ -90,8 +110,13 @@ class AdminActivity : ComponentActivity() {
                         if (latValue != null && lonValue != null) {
                             val locationEntity = LocationEntity(0, "Geri Dönüşüm Noktası", latValue, lonValue, status)
                             viewModel.insert(locationEntity)
+                            dialogMessage = "Konum başarıyla eklendi."
+                            showDialog = true
                         }
-                    }) {
+                    }, modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                    ) {
                         Text(text = "Konum Ekle")
                     }
 
@@ -101,20 +126,30 @@ class AdminActivity : ComponentActivity() {
                     OutlinedTextField(
                         value = id,
                         onValueChange = { id = it },
-                        label = { Text("ID") }
+                        label = { Text("ID") },
+                        modifier = Modifier.padding(bottom = 8.dp)
                     )
 
                     Button(onClick = {
                         val idValue = id.toIntOrNull()
                         if (idValue != null) {
                             viewModel.delete(idValue)
+                            dialogMessage = "Konum başarıyla silindi."
+                            showDialog = true
                         }
-                    }) {
+                    }, modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                    ) {
                         Text(text = "Konum Sil")
                     }
-                    TextButton(onClick = { ChooseMapActivity::class.java }) {
-                        Text("Konumları görün")
-                    }
+
+                   /* Button(onClick = { ChooseMapActivity::class.java }, modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                    ) {
+                        Text("Konumları Görün")
+                    }*/
                 }
             }
         }
