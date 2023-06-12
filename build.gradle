@@ -14,11 +14,15 @@ buildscript {
         classpath libs.dokka.plugin
         classpath libs.jacoco.android.plugin
         classpath "com.android.tools.build:gradle:7.0.4"
+        classpath 'com.google.gms:google-services:4.3.15'
+        classpath 'com.google.dagger:hilt-android-gradle-plugin:2.38.1'
     }
 }
 
 plugins {
     alias libs.plugins.dokka apply false
+   // id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin' version '2.0.1' apply false
+
 }
 
 ext.projectArtifactId = { project ->

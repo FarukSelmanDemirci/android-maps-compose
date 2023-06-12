@@ -13,14 +13,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class ChooseMapActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-                Surface(color = MaterialTheme.colors.background) {
-                    ChooseMapScreen()
+            Surface(color = MaterialTheme.colors.background) {
+                ChooseMapScreen()
             }
         }
     }
@@ -28,7 +29,6 @@ class ChooseMapActivity : ComponentActivity() {
 
 @Composable
 fun ChooseMapScreen() {
-
     val context = LocalContext.current
     Column(
         Modifier
@@ -39,16 +39,39 @@ fun ChooseMapScreen() {
     ) {
         Button(onClick = {
             val intent = Intent(context, MapClusteringActivity::class.java)
+            intent.putExtra("durum", true) // "Kağıt, Cam Geri dönüşüm konumları " için durum değerini 'true' olarak ayarla
+            context.startActivity(intent)
+        }) {
+            Text("Kağıt, Cam Geri dönüşüm konumları ")
+        }
+
+        Button(onClick = {
+            val intent = Intent(context, MapClusteringActivity::class.java)
+            intent.putExtra("durum", false) // "Textil Geri dönüşüm konumları" için durum değerini 'false' olarak ayarla
             context.startActivity(intent)
         }) {
             Text("Textil Geri dönüşüm konumları")
         }
-
-        Button(onClick = {
-            val intent = Intent(context, MapClusteringActivity2::class.java)
-            context.startActivity(intent)
-        }) {
-            Text("Kağıt, Cam Geri dönüşüm konumları")
-        }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

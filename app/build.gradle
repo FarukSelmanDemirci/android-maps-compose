@@ -3,6 +3,8 @@ plugins {
     id 'kotlin-android'
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
     id 'kotlin-kapt'
+    id 'com.google.gms.google-services'
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -39,6 +41,9 @@ android {
 }
 
 dependencies {
+    implementation("com.google.dagger:hilt-android:2.44")
+    kapt("com.google.dagger:hilt-android-compiler:2.44")
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation platform(libs.androidx.compose.bom)
     implementation libs.androidx.compose.activity
@@ -49,6 +54,7 @@ dependencies {
     implementation libs.maps.ktx.std
     implementation libs.maps.utils
     implementation libs.androidx.compose.ui.preview.tooling
+    implementation 'com.google.firebase:firebase-analytics-ktx:21.3.0'
     debugImplementation libs.androidx.compose.ui.tooling
 
     androidTestImplementation platform(libs.androidx.compose.bom)
@@ -80,10 +86,13 @@ dependencies {
     kapt "androidx.room:room-compiler:2.5.1" // replace with the latest version
     implementation "androidx.room:room-ktx:2.5.1" // replace with the latest version
 }
+kapt {
+    correctErrorTypes = true
+}
 
 secrets {
     // To add your Maps API key to this project:
     // 1. Add this line to your local.properties file, where YOUR_API_KEY is your API key:
-    //        MAPS_API_KEY=YOUR_API_KEY
+      // MAPS_API_KEY='AIzaSyCwJsCQAgAMuzUhNTLrZV8-KMDBAdywTLA'
     defaultPropertiesFileName 'local.defaults.properties'
 }

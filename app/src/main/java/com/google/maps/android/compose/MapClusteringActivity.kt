@@ -13,10 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,8 +25,15 @@ import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.clustering.ClusterItem
 import com.google.maps.android.compose.clustering.Clustering
-import kotlin.random.Random
 import android.content.Context
+import androidx.activity.viewModels
+import androidx.compose.runtime.*
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
+import com.google.maps.android.compose.theme.LocationEntity
+import com.google.maps.android.compose.theme.LocationViewModel
+import com.google.maps.android.compose.theme.locasyon
+import dagger.hilt.android.AndroidEntryPoint
 import java.io.IOException
 
 private val TAG = MapClusteringActivity::class.simpleName
@@ -46,48 +49,95 @@ fun getJsonDataFromAsset(context: Context, fileName: String): String? {
     return jsonString
 }
 
-data class locasyon(val Lokasyon: String)
 
+@AndroidEntryPoint
 class MapClusteringActivity : ComponentActivity() {
+    private val viewModel: LocationViewModel by viewModels()
+
+    private var status: Boolean=false
+    private var databaseFilled: Boolean = false
+    private val DATABASE_FILLED = "database_filled"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        status = intent.getBooleanExtra("durum", true)
+
+        // Get SharedPreferences
+        val sharedPref = this.getPreferences(Context.MODE_PRIVATE)
+        databaseFilled = sharedPref.getBoolean(DATABASE_FILLED, false)
+
         setContent {
-            GoogleMapClustering()
+            GoogleMapClustering(viewModel, status, databaseFilled)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        // Save to SharedPreferences when the activity is stopped
+        val sharedPref = this.getPreferences(Context.MODE_PRIVATE) ?: return
+        with (sharedPref.edit()) {
+            putBoolean(DATABASE_FILLED, true)
+            apply()
         }
     }
 }
 
+
+
 @Composable
-fun GoogleMapClustering() {
+fun GoogleMapClustering(viewModel: LocationViewModel, status: Boolean, databaseFilled: Boolean) {
+    val context = LocalContext.current
 
-    val context= LocalContext.current
-    val jsonFileString = getJsonDataFromAsset(context, "list.json")
-    Log.i("data", jsonFileString!!)
-    val gson = Gson()
-    val listlocasyonType = object : TypeToken<List<locasyon>>() {}.type
+    if (!databaseFilled) {
+        val jsonFileString = getJsonDataFromAsset(context, "list.json")
+        Log.i("data", jsonFileString!!)
+        val gson = Gson()
+        val listlocasyonType = object : TypeToken<List<locasyon>>() {}.type
 
-    var lokasyon: List<locasyon> = gson.fromJson(jsonFileString, listlocasyonType)
-    val items = remember { mutableStateListOf<MyItem>() }
-    lokasyon.forEachIndexed {
-            idx, lokasyon -> Log.i("data", "> Item $idx:\n$lokasyon")
-        LaunchedEffect(Unit) {
-            val lat =   lokasyon.Lokasyon?.split(",")?.first()?.toDouble()
-            val log =  lokasyon.Lokasyon?.split(",")?.last()?.toDouble()
-            val position = lat?.let {
-                log?.let { it1 ->
-                    LatLng(
-                        it, it1
-
-                    )
+        var lokasyon: List<locasyon> = gson.fromJson(jsonFileString, listlocasyonType)
+        lokasyon.forEachIndexed { idx, loc ->
+            Log.i("data", "> Item $idx:\n$loc")
+            LaunchedEffect(Unit) {
+                val lat = loc.Lokasyon?.split(",")?.first()?.toDouble()
+                val lon = loc.Lokasyon?.split(",")?.last()?.toDouble()
+                // Check it out
+                if (lat != null && lon != null) {
+                    val locationName = if (loc.durum) "Kağıt ve Cam GND" else "Tekstil Konumu"
+                    val locationEntity = LocationEntity(id = loc.id, locationName, lat, lon, loc.durum)
+                    viewModel.insert(locationEntity)  // We're adding the location to the database.
                 }
             }
-            position?.let { MyItem(it, "Geri Dönüşüm Noktası", " ") }?.let { items.add(it) }
-
         }
+    }
+
+
+
+    val items = remember { mutableStateListOf<MyItem>() }
+
+    val locationObserver = Observer<List<LocationEntity>> { locations ->
+        locations.forEach { locationEntity ->
+            if (locationEntity.status == status) { // Add this condition
+                val position = LatLng(locationEntity.lat, locationEntity.lon)
+                val item = MyItem(position, locationEntity.id, "GND.", " ")
+                if (item !in items) items.add(item)
+            }
+        }
+    }
+
+
+    LaunchedEffect(Unit) {
+        viewModel.getLocationsByDurum(status).observe(context as LifecycleOwner, locationObserver)
     }
 
     GoogleMapClustering(items = items)
 }
+
+
+
+
+
 
 @OptIn(MapsComposeExperimentalApi::class)
 @Composable
@@ -148,6 +198,7 @@ fun GoogleMapClustering(items: List<MyItem>) {
 
 data class MyItem(
     val itemPosition: LatLng,
+    val itemId: Int,   // Konum ID'sini saklayan yeni alan.
     val itemTitle: String,
     val itemSnippet: String,
 ) : ClusterItem {
@@ -157,6 +208,7 @@ data class MyItem(
     override fun getTitle(): String =
         itemTitle
 
+    // Bilgi ekranında hem konum adı hem de konum ID'sini gösteriyoruz.
     override fun getSnippet(): String =
-        itemSnippet
+        "$itemSnippet. ID: $itemId"
 }

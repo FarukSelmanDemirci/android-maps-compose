@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import com.google.maps.android.compose.User
+import com.google.maps.android.compose.UserData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -47,7 +47,7 @@ fun SignUp(
             visualTransformation = PasswordVisualTransformation()
         )
         Button(onClick = {
-            val user = User(0, username, password)
+            val user = UserData(0, username, password,0)
             CoroutineScope(Dispatchers.IO).launch {
                 database.userDao().insertUser(user)
             }

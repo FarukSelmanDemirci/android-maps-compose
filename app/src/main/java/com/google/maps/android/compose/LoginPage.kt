@@ -3,9 +3,7 @@ package com.google.maps.android.compose
 import android.content.Intent
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
-import androidx.compose.foundation.text.KeyboardOptions
+
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
@@ -13,21 +11,9 @@ import androidx.compose.material.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.startActivity
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.google.maps.android.compose.theme.UserDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -53,12 +39,12 @@ fun Login(
         TextField(
             value = username,
             onValueChange = { username = it },
-            label = { Text("Username") }
+            label = { Text("Kullanıcı Adı") }
         )
         TextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password") },
+            label = { Text("Şifre") },
             visualTransformation = PasswordVisualTransformation()
         )
         Button(onClick = {
@@ -66,25 +52,34 @@ fun Login(
                 val user = database.userDao().validateUser(username, password)
                 if (user != null) {
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(context, "Login successful!", Toast.LENGTH_SHORT).show()
-                        val intent = Intent(context, ChooseMapActivity::class.java) // Changed here
+                        Toast.makeText(context, "Giriş başarılı!", Toast.LENGTH_SHORT).show()
+
+                        val activity = if (user.type == 1) {
+                            AdminActivity::class.java
+                        } else {
+                            ChooseMapActivity::class.java
+                        }
+
+                        val intent = Intent(context, activity)
                         context.startActivity(intent)
                     }
                 } else {
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(context, "Invalid username or password", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            "Kullanıcı adı veya şifre yanlış",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }
-        })
-        {
-            Text("SIGN IN")
+        }) {
+            Text("Giriş Yap")
         }
         TextButton(onClick = { onSignUpNeeded() }) {
-            Text("Don't have an account? Sign up")
+            Text("Hesabınız yok mu?Kayıt olun")
         }
+
     }
-
 }
-
 

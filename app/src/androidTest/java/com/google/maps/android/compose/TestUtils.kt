@@ -5,7 +5,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 
 val hasValidApiKey: Boolean =
-    BuildConfig.MAPS_API_KEY.isNotBlank() && BuildConfig.MAPS_API_KEY != "YOUR_API_KEY"
+    BuildConfig.MAPS_API_KEY.isNotBlank() && BuildConfig.MAPS_API_KEY != "AIzaSyCwJsCQAgAMuzUhNTLrZV8-KMDBAdywTLA"
 
 const val assertRoundingError: Double = 0.01
 
