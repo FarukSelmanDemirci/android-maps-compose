@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "830923698737",
+    "project_id": "android-maps-compose-6a70a",
+    "storage_bucket": "android-maps-compose-6a70a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:830923698737:android:0db3f81e034a157cdc5b10",
+        "android_client_info": {
+          "package_name": "com.google.maps.android.compose"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "830923698737-24v1qlaaqnh69ogfoioumtmj9nr4p8qv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBh310Gp6iIonZSwDGVbTOWSM1jSATlxk0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "830923698737-24v1qlaaqnh69ogfoioumtmj9nr4p8qv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
